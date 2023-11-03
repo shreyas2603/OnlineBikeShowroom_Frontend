@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function BikeList() {
   const [bikes, setBikes] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedBike, setSelectedBike] = useState(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     // Fetch bikes from your backend API
@@ -42,6 +45,13 @@ function BikeList() {
     setSearchResults([]);
   };
 
+  const handleSearchButtonClick = () => {
+    // Redirect to the bike details page when the "Search" button is clicked
+    if (selectedBike) {
+      navigate(`/bikes/${selectedBike._id}`);
+    }
+  };
+
   return (
     <div>
       <div className="bg-image-container">
@@ -65,7 +75,9 @@ function BikeList() {
                 </ul>
               </div>
             )}
-            <button className="search-button">Search</button>
+            <button className="search-button" onClick={handleSearchButtonClick}>
+              Search
+            </button>
           </div>
         </div>
       </div>
@@ -79,7 +91,7 @@ function BikeList() {
                 <h5 className="card-title">
                   {bike.brand} - {bike.model}
                 </h5>
-                <p className="card-text">Price: ${bike.price}</p>
+                <p className="card-text">Price: ₹ {bike.price}</p>
                 <Link to={`/bikes/${bike._id}`} className="btn btn-primary">
                   View Details
                 </Link>
