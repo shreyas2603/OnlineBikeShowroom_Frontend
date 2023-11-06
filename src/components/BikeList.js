@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Link,useNavigate} from 'react-router-dom'
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
+import { Link } from 'react-router-dom';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function BikeList() {
   const [bikes, setBikes] = useState([]);
@@ -97,7 +102,7 @@ function BikeList() {
                 <h5 className="card-title">
                   {bike.brand} - {bike.model}
                 </h5>
-                <p className="card-text">Price: ${bike.price}</p>
+                <p className="card-text">Price: ₹ {bike.price}</p>
                 <Link to={`/bikes/${bike._id}`} className="btn btn-primary">
                   View Details
                 </Link>
