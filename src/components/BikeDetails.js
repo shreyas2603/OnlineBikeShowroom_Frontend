@@ -1,55 +1,125 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import {useAuth} from '../context/AuthContext'; // Import your AuthContext
+import { useState,useEffect } from 'react';
 import axios from 'axios';
 
-const BikeDetails = ({ bikeId }) => {
+const BikeDetails = ({ id }) => {
+  const { isAuthenticated } = useAuth();
+
   const [selectedColor, setSelectedColor] = useState('imageblack'); // Default color
   const [bikeDetails, setBikeDetails] = useState(null);
+  const navigate = useNavigate();
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
   };
 
+  const handlePurchaseClick = () => {
+    // Check if the user is authenticated using the context state
+    if (isAuthenticated) {
+      // User is authenticated, you can proceed with the bike purchase logic
+      navigate('/payment');
+    } else {
+      // User is not authenticated, navigate to the Signup page
+      navigate('/signup');
+    }
+  };
+
   useEffect(() => {
-    console.log('bikeId:', bikeId);
-    if (bikeId) {
-      console.log('Fetching bike details...');
+    if (id) {
       // Fetch bike details based on bikeId from your API
-      axios.get(`http://localhost:4000/api/bikes/${bikeId}`)
+      axios.get(`http://localhost:4000/api/bikes/${id}`)
         .then((response) => {
-          console.log('hii');
           setBikeDetails(response.data);
         })
         .catch((error) => {
           console.error('Error fetching bike details:', error);
-          console.log('hii');
         });
     }
-    else{
-      console.log('error');
-    }
-  }, [bikeId]);
+  }, [id]);
 
   return (
     <div className="bike-details-container">
       {bikeDetails && (
-        <div className="bike-image-container">
-          <img src={bikeDetails[selectedColor]} alt="Bike" />
+        <div className="bike-details">
+          <div className="color-options">
+            <button
+              key="imageblack"
+              onClick={() => handleColorChange("imageblack")}
+              className={`color-button ${selectedColor === "imageblack" ? "active" : ""}`}
+              style={{ backgroundColor: "black", height: "35px" }}
+            ></button>
+            <button
+              key="imageblue"
+              onClick={() => handleColorChange("imageblue")}
+              className={`color-button ${selectedColor === "imageblue" ? "active" : ""}`}
+              style={{ backgroundColor: "blue", height: "35px" }}
+            ></button>
+            <button
+              key="imagered"
+              onClick={() => handleColorChange("imagered")}
+              className={`color-button ${selectedColor === "imagered" ? "active" : ""}`}
+              style={{ backgroundColor: "red", height: "35px" }}
+            ></button>
+          </div>
+          <div className="bike-options">
+            <div className="bike-image-container">
+              <img
+                src={bikeDetails[selectedColor]}
+                alt="Bike"
+                style={{ maxWidth: '100%', height: '400px' }}
+              />
+            </div>
+            <div className="purchase-section">
+              <h4>{bikeDetails.brand} {bikeDetails.model}</h4>
+              <h4>Price: ₹ {bikeDetails.price}</h4>
+              <button onClick={handlePurchaseClick} style={{marginBottom: '40px'}}>Purchase Bike</button>
+            </div>
+          </div>
+          <div className="bike-details-table">
+            
+            <table className="product-table">
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Brand</td>
+                  <td>{bikeDetails.brand}</td>
+                </tr>
+                <tr>
+                  <td>Model</td>
+                  <td>{bikeDetails.model}</td>
+                </tr>
+                <tr>
+                  <td>Mileage</td>
+                  <td>{bikeDetails.mileage}</td>
+                </tr>
+                <tr>
+                  <td>Weight</td>
+                  <td>{bikeDetails.weight}</td>
+                </tr>
+                <tr>
+                  <td>Engine Capacity</td>
+                  <td>{bikeDetails.EngineCapacity}</td>
+                </tr>
+                <tr>
+                  <td>Fuel Tank Capacity</td>
+                  <td>{bikeDetails.FuelTankCapacity}</td>
+                </tr>
+                <tr>
+                  <td>Seat Height</td>
+                  <td>{bikeDetails.SeatHeight}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
-      <div className="bike-customization">
-        <h2>Customization</h2>
-        <div className="color-options">
-          {bikeDetails && Object.keys(bikeDetails).map((color) => (
-            <button
-              key={color}
-              onClick={() => handleColorChange(color)}
-              className={selectedColor === color ? 'active' : ''}
-            >
-              {color === 'imageblack' ? 'Black' : color === 'imageblue' ? 'Blue' : 'Red'}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
