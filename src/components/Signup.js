@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
@@ -13,7 +12,6 @@ function Signup() {
   const [password, setPassword] = useState('');
   const [registrationStatus, setRegistrationStatus] = useState(null);
 
-  const {toggleAuth,toggleTempuser} = useAuth();
 
   const navigate = useNavigate();
 
@@ -27,11 +25,10 @@ function Signup() {
 
       if (response.status === 201) {
         console.log('Registration successful!');
-        toggleTempuser(username);
-        toggleAuth();
-        setRegistrationStatus('Registration successful');
-        // You can navigate to another page here
-        navigate('/payment');
+        // toggleTempuser(username);
+         //toggleAuth();
+         // You can navigate to another page here
+         navigate('/login');
       }
     } catch (error) {
       console.error('Error during registration:', error);
@@ -43,6 +40,7 @@ function Signup() {
   const handleLoginClick = () => {
     navigate('/login');
   };
+  
   return (
     <section className="signup">
       <div className="container2">

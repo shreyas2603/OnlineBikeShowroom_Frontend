@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import {Link,useNavigate} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
-import { Link } from 'react-router-dom';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import {useAuth} from '../context/AuthContext';
 
 function BikeList() {
   const [bikes, setBikes] = useState([]);
@@ -16,6 +12,8 @@ function BikeList() {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedBike, setSelectedBike] = useState(null);
   
+  const {isAuthenticated,roles} = useAuth();
+
   const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
@@ -23,7 +21,7 @@ function BikeList() {
     axios.get('http://localhost:4000/api/bikes')
       .then((res) => {
         setBikes(res.data);
-        console.log('Fetched bikes data:', res.data);
+        console.log('Fetched bikes data');
       })
       .catch((error) => {
         console.error('Error fetching bikes:', error);
@@ -57,6 +55,27 @@ function BikeList() {
     }
   };
 
+  const handleDelete = async (bikeId) => {
+    if(window.confirm("Confirm delete bike ?")){
+      try {
+        // Send a DELETE request to the backend to delete the bike
+        const response = await axios.delete(`http://localhost:4000/api/bikes/${bikeId}`);
+        
+        if (response.status === 200) {
+          // Handle the success case, e.g., show a message or update the list of bikes
+          alert("Deleted successfully :sad: ")
+          console.log('Bike deleted successfully');
+          window.location.reload();
+        } else {
+          // Handle other cases, e.g., show an error message
+          console.error('An error occurred while deleting the bike');
+        }
+      } catch (error) {
+        console.error('An error occurred while deleting the bike:', error);
+        // Handle errors, e.g., show an error message
+      }
+    }
+  };
 
  return (
     <div>
@@ -64,32 +83,29 @@ function BikeList() {
         <div className="bg-image" style={{ backgroundImage: `url('/images/bike.jpg')` }}>
           <div><h2 className="h2">RIDE THE BIKE OF YOUR DREAM!!</h2></div>
           <div className="search-container">
-  <div className="input-container">
-    <input
-      type="text"
-      placeholder="Search for a bike..."
-      value={searchInput}
-      onChange={handleSearchInputChange}
-    />
-    {searchResults.length > 0 && (
-      <div className="search-results">
-        <ul>
-          {searchResults.map((bike) => (
-            <li key={bike._id} onClick={() => handleSelectBike(bike)}>
-              {bike.brand} - {bike.model}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </div>
-  <button className="search-button" onClick={handleSearchButtonClick}>
-    Search
-  </button>
-</div>
-
-
-
+            <div className="input-container">
+              <input
+                type="text"
+                placeholder="Search for a bike..."
+                value={searchInput}
+                onChange={handleSearchInputChange}
+              />
+              {searchResults.length > 0 && (
+                <div className="search-results">
+                  <ul>
+                    {searchResults.map((bike) => (
+                      <li key={bike._id} onClick={() => handleSelectBike(bike)}>
+                        {bike.brand} - {bike.model}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <button className="search-button" onClick={handleSearchButtonClick}>
+              Search
+            </button>
+          </div>
         </div>
       </div>
 
@@ -106,6 +122,16 @@ function BikeList() {
                 <Link to={`/bikes/${bike._id}`} className="btn btn-primary">
                   View Details
                 </Link>
+                {isAuthenticated && roles.includes('Admin') && (
+                    <Link to={`/bikes/${bike._id}/edit`} className="btn btn-secondary my-1 mx-1">
+                      Edit
+                    </Link>
+                )}
+                {isAuthenticated && roles.includes('Admin') && (
+                    <button className="btn btn-danger mx-1" onClick={()=>handleDelete(bike._id)}>
+                      Delete
+                    </button>
+                )}
               </div>
             </div>
           </div>

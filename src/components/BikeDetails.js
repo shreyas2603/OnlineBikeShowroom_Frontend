@@ -1,35 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useAuth} from '../context/AuthContext'; // Import your AuthContext
-import { useState,useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import './BikeCarousel';
+import BikeCarousel from './BikeCarousel';
+import './BikeDetails.css';
 
 const BikeDetails = ({ id }) => {
   const { isAuthenticated } = useAuth();
-
-  const [selectedColor, setSelectedColor] = useState('imageblack'); // Default color
-  const [bikeDetails, setBikeDetails] = useState(null);
   const navigate = useNavigate();
+
+  const [selectedColor, setSelectedColor] = useState('imageblack');
+  const [selectedAngle, setSelectedAngle] = useState('imageblack'); // Default angle
+  const [bikeDetails, setBikeDetails] = useState(null);
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
+    setSelectedAngle(`image${color}`);
   };
 
+  const handleAngleChange = (angle) => {
+    setSelectedAngle(angle);
+  };
+
+  const handleMouseOut = () => {
+    // Reset selectedAngle to the default value when the mouse leaves the color buttons container
+    setSelectedAngle("imageblack");
+  };
+  
+  
+
   const handlePurchaseClick = () => {
-    // Check if the user is authenticated using the context state
     if (isAuthenticated) {
-      // User is authenticated, you can proceed with the bike purchase logic
       navigate('/payment');
     } else {
-      // User is not authenticated, navigate to the Signup page
       navigate('/signup');
     }
   };
 
+  
+
   useEffect(() => {
     if (id) {
-      // Fetch bike details based on bikeId from your API
-      axios.get(`http://localhost:4000/api/bikes/${id}`)
+      axios
+        .get(`http://localhost:4000/api/bikes/${id}`)
         .then((response) => {
           setBikeDetails(response.data);
         })
@@ -39,45 +53,88 @@ const BikeDetails = ({ id }) => {
     }
   }, [id]);
 
+  useEffect(() => {
+  // Update the bikeDetails state when it changes
+  setBikeDetails(bikeDetails);
+}, [bikeDetails]);
+
+  
   return (
-    <div className="bike-details-container">
-      {bikeDetails && (
-        <div className="bike-details">
-          <div className="color-options">
-            <button
-              key="imageblack"
-              onClick={() => handleColorChange("imageblack")}
-              className={`color-button ${selectedColor === "imageblack" ? "active" : ""}`}
-              style={{ backgroundColor: "black", height: "35px" }}
-            ></button>
-            <button
-              key="imageblue"
-              onClick={() => handleColorChange("imageblue")}
-              className={`color-button ${selectedColor === "imageblue" ? "active" : ""}`}
-              style={{ backgroundColor: "blue", height: "35px" }}
-            ></button>
-            <button
-              key="imagered"
-              onClick={() => handleColorChange("imagered")}
-              className={`color-button ${selectedColor === "imagered" ? "active" : ""}`}
-              style={{ backgroundColor: "red", height: "35px" }}
-            ></button>
+    <div>
+      <div className="bike-details-container">
+        {bikeDetails && (
+          <div className="bike-details">
+            <div className="color-options">
+                <button
+                  key="imageblack"
+                  onClick={() => handleColorChange("black")}
+                  className={`color-button ${selectedColor === "black" ? "active" : ""}`}
+                  style={{ backgroundColor: "black", height: "35px" }}
+                ></button>
+                <button
+                  key="imageblue"
+                  onClick={() => handleColorChange("blue")}
+                  className={`color-button ${selectedColor === "blue" ? "active" : ""}`}
+                  style={{ backgroundColor: "blue", height: "35px" }}
+                ></button>
+                <button
+                  key="imagered"
+                  onClick={() => handleColorChange("red")}
+                  className={`color-button ${selectedColor === "red" ? "active" : ""}`}
+                  style={{ backgroundColor: "red", height: "35px" }}
+                ></button>
+              </div>
+
+            <div className="angle-options" onMouseOut={handleMouseOut}>
+            <div
+              key="image1"
+              onMouseEnter={() => handleAngleChange('image1')}
+              className={`angle-box ${selectedAngle === 'image1' ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${bikeDetails.image1})` }}
+            ></div>
+            <div
+              key="image2"
+              onMouseEnter={() => handleAngleChange('image2')}
+              className={`angle-box ${selectedAngle === 'image2' ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${bikeDetails.image2})` }}
+            ></div>
+            <div
+              key="image3"
+              onMouseEnter={() => handleAngleChange('image3')}
+              className={`angle-box ${selectedAngle === 'image3' ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${bikeDetails.image3})` }}
+            ></div>
           </div>
-          <div className="bike-options">
+
+
+
+
+            <div className="bike-options">
+              {/* Bike image */}
+
             <div className="bike-image-container">
-              <img
-                src={bikeDetails[selectedColor]}
-                alt="Bike"
-                style={{ maxWidth: '100%', height: '400px' }}
-              />
+              {bikeDetails && (
+                <img
+                  src={bikeDetails[selectedAngle]}
+                  alt="Bike"
+                  style={{ maxWidth: '100%', height: '400px' }}
+                />
+              )}
             </div>
-            <div className="purchase-section">
-              <h4>{bikeDetails.brand} {bikeDetails.model}</h4>
-              <h4>Price: ₹ {bikeDetails.price}</h4>
-              <button onClick={handlePurchaseClick} style={{marginBottom: '40px'}}>Purchase Bike</button>
+
+              {/* Purchase section */}
+              <div className="purchase-section">
+                <h4>
+                  {bikeDetails.brand} {bikeDetails.model}
+                </h4>
+                <h4>Price: ₹ {bikeDetails.price}</h4>
+                <button onClick={handlePurchaseClick} style={{ marginBottom: '40px' }}>
+                  Purchase Bike
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="bike-details-table">
+
+            <div className="bike-details-table">
             
             <table className="product-table">
               <thead>
@@ -118,8 +175,12 @@ const BikeDetails = ({ id }) => {
               </tbody>
             </table>
           </div>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
+      <div>
+        <BikeCarousel />
+      </div>
     </div>
   );
 };
