@@ -85,26 +85,7 @@ const BikeDetails = ({ id }) => {
                 ></button>
               </div>
 
-            <div className="angle-options" onMouseOut={handleMouseOut}>
-            <div
-              key="image1"
-              onMouseEnter={() => handleAngleChange('image1')}
-              className={`angle-box ${selectedAngle === 'image1' ? 'active' : ''}`}
-              style={{ backgroundImage: `url(${bikeDetails.image1})` }}
-            ></div>
-            <div
-              key="image2"
-              onMouseEnter={() => handleAngleChange('image2')}
-              className={`angle-box ${selectedAngle === 'image2' ? 'active' : ''}`}
-              style={{ backgroundImage: `url(${bikeDetails.image2})` }}
-            ></div>
-            <div
-              key="image3"
-              onMouseEnter={() => handleAngleChange('image3')}
-              className={`angle-box ${selectedAngle === 'image3' ? 'active' : ''}`}
-              style={{ backgroundImage: `url(${bikeDetails.image3})` }}
-            ></div>
-          </div>
+            
 
 
 
@@ -123,19 +104,32 @@ const BikeDetails = ({ id }) => {
             </div>
 
               {/* Purchase section */}
-              <div className="purchase-section">
-                <h4>
-                  {bikeDetails.brand} {bikeDetails.model}
-                </h4>
-                <h4>Price: ₹ {bikeDetails.price}</h4>
-                <button onClick={handlePurchaseClick} style={{ marginBottom: '40px' }}>
-                  Purchase Bike
-                </button>
+              
+                
+              <div className="angle-options" onMouseOut={handleMouseOut}>
+                <div
+                  key="image1"
+                  onMouseEnter={() => handleAngleChange('image1')}
+                  className={`angle-box ${selectedAngle === 'image1' ? 'active' : ''}`}
+                  style={{ backgroundImage: `url(${bikeDetails.image1})` }}
+                ></div>
+                <div
+                  key="image2"
+                  onMouseEnter={() => handleAngleChange('image2')}
+                  className={`angle-box ${selectedAngle === 'image2' ? 'active' : ''}`}
+                  style={{ backgroundImage: `url(${bikeDetails.image2})` }}
+                ></div>
+                <div
+                  key="image3"
+                  onMouseEnter={() => handleAngleChange('image3')}
+                  className={`angle-box ${selectedAngle === 'image3' ? 'active' : ''}`}
+                  style={{ backgroundImage: `url(${bikeDetails.image3})` }}
+                ></div>
               </div>
             </div>
 
             <div className="bike-details-table">
-            
+            <div>
             <table className="product-table">
               <thead>
                 <tr>
@@ -174,6 +168,16 @@ const BikeDetails = ({ id }) => {
                 </tr>
               </tbody>
             </table>
+            </div>
+            <div className="purchase-section">
+                <h4>
+                  {bikeDetails.brand} {bikeDetails.model}
+                </h4>
+                <h4>Price: ₹ {bikeDetails.price}</h4>
+                <button onClick={handlePurchaseClick} style={{ marginBottom: '40px' }}>
+                  Purchase Bike
+              </button>
+            </div>
           </div>
           </div>
         )}
