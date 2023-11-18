@@ -18,7 +18,7 @@ function BikeList() {
 
   useEffect(() => {
     // Fetch bikes from your backend API
-    axios.get('http://localhost:4000/api/bikes')
+    axios.get('https://bikeshowroom-backend.onrender.com/api/bikes')
       .then((res) => {
         setBikes(res.data);
         console.log('Fetched bikes data');
@@ -59,7 +59,7 @@ function BikeList() {
     if(window.confirm("Confirm delete bike ?")){
       try {
         // Send a DELETE request to the backend to delete the bike
-        const response = await axios.delete(`http://localhost:4000/api/bikes/${bikeId}`);
+        const response = await axios.delete(`https://bikeshowroom-backend.onrender.com/api/bikes/${bikeId}`);
         
         if (response.status === 200) {
           // Handle the success case, e.g., show a message or update the list of bikes
@@ -111,7 +111,7 @@ function BikeList() {
 
       <div className="row">
         {bikes.map((bike) => (
-          <div className="col-md-3" key={bike._id}>
+          <div className="col-md-4 col-lg-3 col-sm-6 my-2" key={bike._id}>
             <div className="card">
               <img src={bike.imageblack} className="card-img-top" alt={bike.brand} />
               <div className="card-body">

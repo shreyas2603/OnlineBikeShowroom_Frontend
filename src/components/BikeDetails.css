@@ -56,15 +56,47 @@
     height: 400px;
   }
 
+  .bike-image-container img{
+      max-width: 100%;
+      height: 400px;
+  }
+
 /* Style the color options buttons */
 .color-options {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
     flex-direction: column;
+    /* 
+    margin-top: 20px;
     width: 50px;
-    height: 300px;
+    height: 300px; */
     }
+
+    @media (max-width: 1020px) {
+      .color-options{
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+      }
+      .color-options button {
+          margin-right: 40px;
+          min-width: 50px;
+          min-height: 50px;
+      }
+      .bike-details-table{
+          margin-bottom: 50px;
+      }
+      .bike-options {
+          display: flex;
+          flex-direction: column; /* Set the main container to column layout */
+          align-items: center; /* Align children (bike image and color options) to the center horizontally */
+          justify-content: center;
+          margin-right: 0px;
+        }
+      .bike-image-container img{
+          height: auto;
+      }
+  }
     
     .color-options button {
     background-color: #007BFF; /* Default button background color */
@@ -127,7 +159,8 @@
     .bike-details {
     display: flex;
     flex-wrap: wrap; /* Allow content to wrap to the next row if necessary */
-    
+    justify-content: center;
+    align-items: center;
     }
     
     .purchase-section {
@@ -151,3 +184,5 @@
     display: flex;
     flex-direction: column;
     }
+
+    

@@ -1,48 +1,43 @@
-import React, { useState } from 'react';
+// Payment.js
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
+import RazorpayPayment from './RazorpayPayment'; // Import the Razorpay component
+import './Payment.css'
 function Payment() {
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCVV] = useState('');
-  const [paymentStatus, setPaymentStatus] = useState(null);
-
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  // Access price from location.state
+  const { price, color, brand, model,pic } = location.state || {};
 
-  const handlePayment = async (e) => {
-    e.preventDefault();
-    // Implement payment logic here (e.g., simulate success)
-    // Set paymentStatus based on the payment outcome
-    setPaymentStatus('Payment successful');
+  console.log(color);
+  const handlePaymentSuccess = (paymentId) => {
+    // Handle successful payment (e.g., update order status, navigate to success page)
+    console.log('Payment successful. Payment ID:', paymentId);
   };
 
-  const navigate = useNavigate();
   return (
     <div>
-      <h2 style={{marginTop:'50px'}}>Payment Page</h2>
-      {isAuthenticated ? (
-        <form onSubmit={handlePayment}>
-          <div className="form-group">
-            <label>Card Number:</label>
-            <input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
+      <h2 className='paymenth2'>Purchase Confirmation</h2>
+      <div >
+        {isAuthenticated ? (
+          <div className="payment-container">
+            <div><img src={pic} alt="bike" /></div>
+            <div>
+              <h3>Brand: {brand}</h3>
+              <h3>Model: {model}</h3>
+              <h3>Variant : {color}</h3>
+              <RazorpayPayment amount={price} onSuccess={handlePaymentSuccess} />
+            </div>
           </div>
-          <div className="form-group">
-            <label>Expiry Date:</label>
-            <input type="text" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} />
+        ) : (
+          <div className="unauthenticated-message">
+            <p>You need to be authenticated to make a payment.</p>
+            <button onClick={() => navigate('/signup')}>Signup</button>
           </div>
-          <div className="form-group">
-            <label>CVV:</label>
-            <input type="text" value={cvv} onChange={(e) => setCVV(e.target.value)} />
-          </div>
-          <button type="submit">Pay Now</button>
-        </form>
-      ) : (
-        <div>
-          <p>You need to be authenticated to make a payment.</p>
-          <button onClick={() => navigate('/signup')}>Signup</button>
-        </div>
-      )}
-      {paymentStatus && <p>{paymentStatus}</p>}
+        )}  
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
-import './login.css';
+import './login.css'
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -16,7 +16,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/users/login', {
+      const response = await axios.post('https://bikeshowroom-backend.onrender.com/users/login', {
         username,
         password,
       });
@@ -54,7 +54,7 @@ function Login() {
         <div className="signin-content">
           <div className="signin-image">
             <figure>
-              <img src="/images/signin.jpg" alt="signin" />
+              <img src="/images/prof.jpg" alt="signin" />
             </figure>
             <Link to="/signup" className="signup-image-link">
               Create an account

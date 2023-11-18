@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import {useAuth} from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
-import './login.css';
+import './login.css'
 
 
 function Signup() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [registrationStatus, setRegistrationStatus] = useState(null);
 
+  //const [registrationStatus, setRegistrationStatus] = useState(null);
+  
+  const { toggleAuth, toggleTempuser, isAuthenticated } = useAuth();
 
   const navigate = useNavigate();
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:4000/users/register', {
+      const response = await axios.post('https://bikeshowroom-backend.onrender.com/users/register', {
         username,
         email,
         password,
@@ -25,33 +28,36 @@ function Signup() {
 
       if (response.status === 201) {
         console.log('Registration successful!');
-        // toggleTempuser(username);
-         //toggleAuth();
-         // You can navigate to another page here
-         navigate('/login');
+       // toggleTempuser(username);
+        //toggleAuth();
+        // You can navigate to another page here
+        navigate('/login');
       }
     } catch (error) {
       console.error('Error during registration:', error);
       // Handle registration errors and provide user feedback
-      setRegistrationStatus('Registration failed. Please try again.');
     }
   };
 
-  const handleLoginClick = () => {
-    navigate('/login');
-  };
-  
+  const handleLogout = () => {
+    localStorage.clear();
+    toggleAuth(); // Update the state to reflect the logout
+    toggleTempuser('');
+    window.location().reload();
+  }
+
   return (
     <section className="signup">
       <div className="container2">
         <div className="signup-content">
           <div className="signup-form">
             <h2 className="form-title">Sign up</h2>
-            {registrationStatus && (
+            {/* {registrationStatus && (
               <div className={registrationStatus === 'Registration successful' ? 'success-message' : 'error-message'}>
                 {registrationStatus}
               </div>
-            )}
+            )} */}
+            {!isAuthenticated ? (
             <form>
               <div className="form-group">
                 <label>
@@ -99,14 +105,27 @@ function Signup() {
                 </button>
               </div>
             </form>
+            ) : (
+
+              <div>
+              <p>You are already logged in. Click the button below to log out.</p>
+              <button
+                className="btn btn-primary"
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
+            </div>
+
+            )}
           </div>
           <div className="signup-image">
             <figure>
-              <img src="/images/signup.jpg" alt="signup" />
+              <img src="/images/three.webp" alt="signup" />
             </figure>
-            <a type="button" className="signup-image-link" onClick={handleLoginClick}>
+            <Link to="/login" className="signup-image-link">
               I am already a member
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -2,41 +2,39 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import './UserProfile.css'
-
-
+import './UserProfile.css';
 
 function UserProfile() {
   const { tempuser, isAuthenticated, toggleAuth, toggleTempuser } = useAuth();
   const [newUsername, setNewUsername] = useState('');
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const updateUsername = async () => {
     try {
-      const response = await axios.patch('http://localhost:4000/users/update', {
+      const response = await axios.patch('https://bikeshowroom-backend.onrender.com/users/update', {
         username: tempuser, // send the current username
         newUsername: newUsername, // send the new username
       });
 
       if (response.status === 200) {
-        alert('success');
+        alert('Username updated successfully');
         toggleTempuser(newUsername);
         toggleAuth();
         navigate('/login');
         // Optionally update localStorage or any other logic
-      } 
+      }
     } catch (error) {
-      alert("Username is not available");
+      alert('Username is not available');
     }
   };
 
   const deleteAccount = async () => {
     try {
-      const response = await axios.delete('http://localhost:4000/users/delete', {
+      const response = await axios.delete('https://bikeshowroom-backend.onrender.com/users/delete', {
         data: { username: tempuser }, // send the current username
       });
-  
+
       if (response.status === 200) {
         localStorage.clear(); // Clear localStorage
         toggleAuth(); // Log out the user
@@ -55,7 +53,6 @@ function UserProfile() {
       console.error('Error deleting account:', error);
     }
   };
-  
 
   const handleUpdateUsername = () => {
     if (newUsername.trim() !== '') {
@@ -70,40 +67,46 @@ function UserProfile() {
   };
 
   return (
-      <div className="user-profile-container">
-        
-        {isAuthenticated ? (
-            <div>
-              <div className="profile-heading">User Profile</div>
-              <div className="current-username">Current Username: {tempuser}</div>
-              
-                <div className="update-username-container">
-                  <label htmlFor="new-username" className="new-username-label">
-                    New Username:
-                  </label>
-                  <input
-                    type="text"
-                    id="new-username"
-                    className="new-username-input"
-                    value={newUsername}
-                    onChange={(e) => setNewUsername(e.target.value)}
-                  />
-                  <button className="update-username-button" onClick={handleUpdateUsername}>
-                    Update Username
-                  </button>
-                  <button className="delete-account-button" onClick={handleDeleteAccount}>
-                    Delete Account
-                  </button>
-                </div>
+    <div className="user-profile-container">
+      {isAuthenticated ? (
+        <div className="user-profile-content">
+          <div className="left-section">
+            <div className="profile-heading">User Profile</div>
+            <div className="current-username">Current Username: {tempuser}</div>
+            <div className="update-username-container">
+              <label htmlFor="new-username" className="new-username-label">
+                New Username:
+              </label>
+              <input
+                type="text"
+                id="new-username"
+                className="new-username-input"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+              />
+              <button className="update-username-button" onClick={handleUpdateUsername}>
+                Update Username
+              </button>
             </div>
-          ) : (
-            <div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
-              <p>User is not logged in</p>
-              <Link to='/login' className="btn btn-primary">Log in</Link>
+          </div>
+          <div className="right-section">
+            <div className="delete-account-container">
+              <p>Deleting your account will remove all your data permanently.</p>
+              <button className="btn btn-danger delete-account-button" onClick={handleDeleteAccount}>
+                Delete Account
+              </button>
             </div>
-            )
-        } 
-      </div>
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <p>User is not logged in</p>
+          <Link to="/login" className="btn btn-primary">
+            Log in
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -36,7 +36,7 @@ function AddBike() {
 
     // Make a POST request to add the new bike
     axios
-      .post('http://localhost:4000/api/bikes', bike) // Adjust the API endpoint
+      .post('https://bikeshowroom-backend.onrender.com/api/bikes', bike) // Adjust the API endpoint
       .then((response) => {
         console.log('Bike added:', response.data);
         alert("Added !!");

@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import {useAuth} from '../context/AuthContext'; // Import your AuthContext
+import { useState,useEffect } from 'react';
 import axios from 'axios';
-import './BikeCarousel';
+import './BikeCarousel'
 import BikeCarousel from './BikeCarousel';
-import './BikeDetails.css';
+import './BikeDetails.css'
 
-const BikeDetails = ({ id }) => {
+const BikeDetails = ({id}) => {
+  // Access the context
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const [selectedColor, setSelectedColor] = useState('imageblack');
   const [selectedAngle, setSelectedAngle] = useState('imageblack'); // Default angle
   const [bikeDetails, setBikeDetails] = useState(null);
+
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
@@ -28,22 +31,34 @@ const BikeDetails = ({ id }) => {
     setSelectedAngle("imageblack");
   };
   
-  
-
+  // Function to handle the "Purchase Bike" button click
   const handlePurchaseClick = () => {
+    // Check if the user is authenticated using the context state
     if (isAuthenticated) {
-      navigate('/payment');
+      // User is authenticated, you can proceed with the bike purchase logic
+      const colorPrefix = selectedColor.startsWith("image") ? "" : "image";
+      
+      navigate('/payment', {
+        state: {
+          price: parseInt(bikeDetails.price.replace(/,/g, '')),
+          color: selectedColor,
+          brand: bikeDetails.brand,
+          model: bikeDetails.model,
+          pic: bikeDetails[colorPrefix + selectedColor],
+        },
+      });
     } else {
+      // User is not authenticated, navigate to the Signup page
       navigate('/signup');
     }
   };
-
+  
   
 
   useEffect(() => {
     if (id) {
-      axios
-        .get(`http://localhost:4000/api/bikes/${id}`)
+      // Fetch bike details based on bikeId from your API
+      axios.get(`https://bikeshowroom-backend.onrender.com/api/bikes/${id}`)
         .then((response) => {
           setBikeDetails(response.data);
         })
@@ -53,11 +68,11 @@ const BikeDetails = ({ id }) => {
     }
   }, [id]);
 
+  
   useEffect(() => {
-  // Update the bikeDetails state when it changes
-  setBikeDetails(bikeDetails);
-}, [bikeDetails]);
-
+    // Update the bikeDetails state when it changes
+    setBikeDetails(bikeDetails);
+  }, [bikeDetails]);
   
   return (
     <div>
@@ -98,7 +113,6 @@ const BikeDetails = ({ id }) => {
                 <img
                   src={bikeDetails[selectedAngle]}
                   alt="Bike"
-                  style={{ maxWidth: '100%', height: '400px' }}
                 />
               )}
             </div>
@@ -188,5 +202,6 @@ const BikeDetails = ({ id }) => {
     </div>
   );
 };
+
 
 export default BikeDetails;
